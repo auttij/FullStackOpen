@@ -1,0 +1,7 @@
+note over selain
+Selain päipvittää lokaalisti säilössä olevan notes-listan sisältöä.
+Vanhin note poistetaan, ja uusi lisätään listan perään.
+end note
+
+selain->palvelin: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa - paylod: {content: "testi", date: "2021-12-27T11:06:01.718Z"}
+palvelin-->selain: {"message":"note created"}
