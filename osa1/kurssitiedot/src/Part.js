@@ -2,7 +2,7 @@ import React from 'react'
 
 const Part = (props) => {
 	return (
-		<p>{props.course} {props.exercises}</p>
+		<p>{props.part.course} {props.part.exercises}</p>
 	)
 }
 
