@@ -10,6 +10,16 @@ const VoteLine = ({points, selected}) => (
   <p>has {points[selected]} votes</p>
 )
 
+const MostVoted = ({anecdotes, mostVoted, points}) => {
+  return (
+    <>
+      <h2>Anecdote with most votes</h2>
+      <p>{anecdotes[mostVoted]}</p>
+      <VoteLine points={points} selected={mostVoted}/>
+    </>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -23,14 +33,17 @@ const App = () => {
    
   const [selected, setSelected] = useState(0)
   const [points, setPoints] = useState({0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0})
+  const [mostVoted, setMostVoted] = useState(0)
 
   const addPoint = ({selected}) => {
-    console.log(points, selected)
     const newPoints = {
       ...points,
     }
     newPoints[selected] += 1
     setPoints(newPoints)
+
+    if (newPoints[selected] > newPoints[mostVoted])
+      setMostVoted(selected)
   }
 
   const randomAnecdote = () => {
@@ -39,10 +52,12 @@ const App = () => {
 
   return (
     <div>
+      <h2>Anecdote of the day</h2>
       <p>{anecdotes[selected]}</p>
       <VoteLine points={points} selected={selected} />
       <Button text={"vote"} handleClick={() => addPoint({selected})}/>
       <Button text={"next anecdote"} handleClick={() => setSelected(randomAnecdote)} />
+      <MostVoted anecdotes={anecdotes} mostVoted={mostVoted} points={points} />
     </div>
   )
 }
