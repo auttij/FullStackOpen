@@ -17,13 +17,9 @@ const Header = ({course}) => (
 )
 
 const Total = ({parts}) => {
-	let sum = 0
-	parts.forEach(part => {
-		sum += part.exercises
-	});
-
+  const total = parts.reduce( (s, p) => ({exercises: s.exercises + p.exercises}))
 	return (
-		<h3>Total of {sum} exercises</h3>
+		<h3>Total of {total.exercises} exercises</h3>
 	)
 }
 
