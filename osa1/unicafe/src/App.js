@@ -2,7 +2,40 @@ import React, {useState} from 'react'
 
 const Header = ({text}) => <h1>{text}</h1>
 
-const Display = (props) => <p>{props.text} {props.state}</p>
+const Display = ({text, value}) => <p>{text} {value}</p>
+
+const All = ({states}) => {
+  let sum = 0
+  states.forEach(state => sum += state);
+  return (
+    <Display text={"all"} value={sum}/>
+  )
+}
+
+const Average = ({good, neutral, bad}) => {
+  const total = good + neutral + bad
+  if (total == 0) {
+    return (
+      <Display text={"average"} value={0}/>
+    )
+  }
+  return (
+    <Display text={"average"} value={(good - bad) / (good + neutral + bad)}/>
+  )
+}
+
+const Positive = ({good, neutral, bad}) => {
+  const sum = good + neutral + bad
+  if (sum == 0) {
+    return (
+      <Display text={"positive"} value={"0 %"}/>
+    )
+  }
+  return (
+    <Display text={"positive"} value={good / sum * 100 + " %"}/>
+  )
+
+}
 
 const Button = ({handleClick, text}) => (
   <button onClick={handleClick}>
@@ -23,9 +56,12 @@ const App = () => {
       <Button handleClick={() => setNeutral(neutral + 1)} text="neutral"/>
       <Button handleClick={() => setBad(bad + 1)} text="bad"/>
       <Header text={"statistics"}/>
-      <Display text={"good"} state={good}/>
-      <Display text={"neutral"} state={neutral}/>
-      <Display text={"bad"} state={bad}/>
+      <Display text={"good"} value={good}/>
+      <Display text={"neutral"} value={neutral}/>
+      <Display text={"bad"} value={bad}/>
+      <All states={[good, neutral, bad]}/>
+      <Average good={good} neutral={neutral} bad={bad}/>
+      <Positive good={good} neutral={neutral} bad={bad}/>
     </>
   )
 
