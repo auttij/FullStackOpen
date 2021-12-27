@@ -44,17 +44,27 @@ const Button = ({handleClick, text}) => (
 )
 
 const Statistics = ({good, neutral, bad}) => { 
+  const sum = good + neutral + bad
+  if (sum > 0) {
+    return (
+      <>
+        <Header text={"statistics"}/>
+        <Display text={"good"} value={good}/>
+        <Display text={"neutral"} value={neutral}/>
+        <Display text={"bad"} value={bad}/>
+        <All states={[good, neutral, bad]}/>
+        <Average good={good} neutral={neutral} bad={bad}/>
+        <Positive good={good} neutral={neutral} bad={bad}/>
+      </>
+    )
+  }
   return (
     <>
       <Header text={"statistics"}/>
-      <Display text={"good"} value={good}/>
-      <Display text={"neutral"} value={neutral}/>
-      <Display text={"bad"} value={bad}/>
-      <All states={[good, neutral, bad]}/>
-      <Average good={good} neutral={neutral} bad={bad}/>
-      <Positive good={good} neutral={neutral} bad={bad}/>
+      <p>No feedback given</p>
     </>
   )
+
 }
 
 const App = () => { 
