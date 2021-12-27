@@ -2,7 +2,7 @@ import React from 'react'
 
 const Total = (props) => {
 	let sum = 0
-	props.parts.forEach(part => {
+	props.course.parts.forEach(part => {
 		sum += part.exercises
 	});
 
