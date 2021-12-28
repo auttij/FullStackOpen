@@ -6,6 +6,10 @@ const Filter = ({value, onChange}) => (
   <div>filter shown with <input value={value} onChange={onChange}/></div>
 )
 
+const DeleteButton = ({onClick}) => (
+  <button onClick={onClick}>delete</button>
+)
+
 const PersonForm = ({nameVal, numberVal, onSubmit, handleNameChange, handleNumberChange}) => (
   <form onSubmit={onSubmit}>
     <div>
@@ -22,9 +26,9 @@ const PersonForm = ({nameVal, numberVal, onSubmit, handleNameChange, handleNumbe
   </form>
 )
 
-const Persons = ({persons}) => (
+const Persons = ({persons, onDeleteClick}) => (
   <>  
-    {persons.map(person => <p key={person.name}>{person.name} {person.number}</p>)}
+    {persons.map(person => <p key={person.name}>{person.name} {person.number} <DeleteButton onClick={() => onDeleteClick(person.id)}/></p>)}
   </>
 )
 
@@ -64,6 +68,20 @@ const App = () => {
     }
   }
 
+  const deletePerson = id => {
+    const person = persons.find(n => n.id === id)
+    personService.deletePerson(id)
+      .then(
+        setPersons(persons.filter(n => n.id !== id))
+      )
+      .catch(error => {
+        alert(
+          `the person '${person.name}' was already deleted from server`
+        )
+        setPersons(persons.filter(n => n.id !== id))
+      })
+  }
+
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
@@ -92,7 +110,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons persons={peopleToShow}/>
+      <Persons persons={peopleToShow} onDeleteClick={deletePerson}/>
     </div>
   )
 }
