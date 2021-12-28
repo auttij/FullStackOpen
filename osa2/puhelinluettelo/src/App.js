@@ -2,6 +2,36 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
 
+const Notification = ({ successMessage, errorMessage }) => {
+  if (successMessage === null && errorMessage === null) {
+    return null
+  }
+  else if (errorMessage === null) {
+    return (
+      <div className="notification">
+        {successMessage}
+      </div>
+    )
+  } else if (successMessage === null) {
+    return (
+      <div className="error">
+        {errorMessage}
+      </div>
+    )
+  }
+
+  return (
+    <>
+      <div className="notification">
+        {successMessage}
+      </div>
+      <div className="error">
+        {errorMessage}
+      </div>
+    </>
+  )
+}
+
 const Filter = ({value, onChange}) => (
   <div>filter shown with <input value={value} onChange={onChange}/></div>
 )
@@ -37,6 +67,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterVal, setFilterVal] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -62,9 +94,12 @@ const App = () => {
             setPersons(persons.concat(returnedPerson))
             setNewName('')
             setNewNumber('')
+            setSuccessMessage(`Added ${returnedPerson.name}`)
+            setTimeout(() => {
+              setSuccessMessage(null)
+            }, 5000)
           })
     } else {
-      console.log(found)
       const id = found[0].id
       const result = window.confirm(
         `${personObject.name} is already added to the phonebook, replace the old number with a new one?`)
@@ -73,6 +108,10 @@ const App = () => {
           .update(id, personObject)
             .then(returnedPerson => {
               setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+              setSuccessMessage(`Changed number for ${returnedPerson.name}`)
+              setTimeout(() => {
+                setSuccessMessage(null)
+              }, 5000)
             })
       }
     }
@@ -88,9 +127,12 @@ const App = () => {
           setPersons(persons.filter(n => n.id !== id))
         )
         .catch(error => {
-          alert(
+          setErrorMessage(
             `the person '${person.name}' was already deleted from server`
           )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
           setPersons(persons.filter(n => n.id !== id))
         })
     }
@@ -114,6 +156,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification successMessage={successMessage} errorMessage={errorMessage} />
       <Filter value={filterVal} onChange={handleFilterChange}/>
       <h3>add a new</h3>
       <PersonForm 
