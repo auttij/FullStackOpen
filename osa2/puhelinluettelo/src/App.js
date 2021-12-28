@@ -113,6 +113,14 @@ const App = () => {
                 setSuccessMessage(null)
               }, 5000)
             })
+            .catch(error => {
+              setErrorMessage(
+                `Information of '${personObject.name}' was already removed from server`
+              )
+              setTimeout(() => {
+                setErrorMessage(null)
+              }, 5000)
+            })
       }
     }
   }

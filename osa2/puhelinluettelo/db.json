@@ -6,11 +6,6 @@
       "id": 3
     },
     {
-      "name": "Juha Tauriainen",
-      "number": "040-1234567",
-      "id": 4
-    },
-    {
       "name": "Juha Mieto",
       "number": "050-9876312",
       "id": 5
@@ -19,6 +14,11 @@
       "name": "Juha Tapio",
       "number": "044-1234321",
       "id": 6
+    },
+    {
+      "name": "Juha Tauriainen",
+      "number": "-",
+      "id": 7
     }
   ]
 }
