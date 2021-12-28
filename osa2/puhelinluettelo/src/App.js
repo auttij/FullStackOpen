@@ -70,16 +70,20 @@ const App = () => {
 
   const deletePerson = id => {
     const person = persons.find(n => n.id === id)
-    personService.deletePerson(id)
-      .then(
-        setPersons(persons.filter(n => n.id !== id))
-      )
-      .catch(error => {
-        alert(
-          `the person '${person.name}' was already deleted from server`
+    const result = window.confirm(`Delete ${person.name}`)
+
+    if (result) {
+      personService.deletePerson(id)
+        .then(
+          setPersons(persons.filter(n => n.id !== id))
         )
-        setPersons(persons.filter(n => n.id !== id))
-      })
+        .catch(error => {
+          alert(
+            `the person '${person.name}' was already deleted from server`
+          )
+          setPersons(persons.filter(n => n.id !== id))
+        })
+    }
   }
 
   const handleNameChange = (event) => {
