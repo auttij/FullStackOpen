@@ -9,7 +9,25 @@ const ChangeFilterButton = ({value, onClick}) => (
   <button value={value} onClick={() => onClick(value)}>show</button>
 )
 
-const ShowCountry = ({country}) => (
+const Weather = ({city, weather, changeWeatherAction}) => {
+  useEffect(() => {
+    axios
+      .get(`http://api.weatherstack.com/current?access_key=${process.env.REACT_APP_API_KEY}&query=${city}`)
+      .then(response => {
+        changeWeatherAction(response.data)
+      })
+  }, [])
+
+  return (
+    <div>
+      <h2>Weather in {city}</h2>
+      <p><strong>temperature:</strong> {weather.temperature} Celsius</p>
+      <p><strong>wind:</strong> {weather.wind_speed} mph direction {weather.wind_dir}</p>
+    </div>
+  )
+}
+
+const ShowCountry = ({country, weather, changeWeatherAction}) => (
   <div>
     <h1>{country.name.common}</h1>
     <p>capital {country.capital[0]}</p>
@@ -22,10 +40,11 @@ const ShowCountry = ({country}) => (
       )}
     </ul>
     <img src={country.flags.png}></img>
+    <Weather city={country.capital[0]} weather={weather} changeWeatherAction={changeWeatherAction}/>
   </div> 
 )
 
-const ShowCountries = ({countriesToShow, onClickAction}) => {
+const ShowCountries = ({countriesToShow, onClickAction, weather, changeWeatherAction}) => {
   if (countriesToShow.length > 10) {
     return(    
       <p>Too many matches, specify another filter</p>
@@ -46,7 +65,7 @@ const ShowCountries = ({countriesToShow, onClickAction}) => {
     )
   } else {
     return(
-      <ShowCountry country={countriesToShow[0]}/>
+      <ShowCountry country={countriesToShow[0]} weather={weather} changeWeatherAction={changeWeatherAction}/>
     )
   }
 }
@@ -55,6 +74,7 @@ const App = () =>  {
   const [countryFilter, setCountryFilter] = useState('')
   const [countries, setCountries] = useState([])
   const [countriesToShow, setCountriesToShow] = useState([])
+  const [weather, setWeather] = useState({temperature: 0, wind_speed: 0, wind_dir: "N"})
 
   useEffect(() => {
     axios
@@ -78,10 +98,24 @@ const App = () =>  {
     handleCountryChange(event)
   }
 
+  const changeWeatherTo = (data) => {
+    const weatherObj = {
+      temperature: data.current.temperature,
+      wind_speed: data.current.wind_speed,
+      wind_dir: data.current.wind_dir
+    }
+    setWeather(weatherObj)
+  }
+
   return (
     <>
       <Filter value={countryFilter} onChange={handleCountryChange} />
-      <ShowCountries countriesToShow={countriesToShow} onClickAction={changeFilterTo}/>
+      <ShowCountries 
+        countriesToShow={countriesToShow} 
+        onClickAction={changeFilterTo} 
+        weather={weather}
+        changeWeatherAction={changeWeatherTo}
+      />
     </>
   );
 }
