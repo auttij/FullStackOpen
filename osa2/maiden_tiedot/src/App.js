@@ -5,6 +5,10 @@ const Filter = ({value, onChange}) => (
   <p>find countries <input value={value} onChange={onChange}/></p>
 )
 
+const ChangeFilterButton = ({value, onClick}) => (
+  <button value={value} onClick={() => onClick(value)}>show</button>
+)
+
 const ShowCountry = ({country}) => (
   <div>
     <h1>{country.name.common}</h1>
@@ -21,7 +25,7 @@ const ShowCountry = ({country}) => (
   </div> 
 )
 
-const ShowCountries = ({countriesToShow}) => {
+const ShowCountries = ({countriesToShow, onClickAction}) => {
   if (countriesToShow.length > 10) {
     return(    
       <p>Too many matches, specify another filter</p>
@@ -29,13 +33,16 @@ const ShowCountries = ({countriesToShow}) => {
   }  else if (countriesToShow.length > 1)  {
     return (
       <>
-        {countriesToShow.map(country => <p key={country.name.common}>{country.name.common}</p>)}
+        {countriesToShow.map(country => 
+          <p key={country.name.common}>
+            {country.name.common}
+            <ChangeFilterButton value={country.name.common} onClick={onClickAction}/>
+          </p>)}
       </>
     )
   } else if (countriesToShow.length == 0) {
     return (
-      <p>
-      </p>
+      <p>No countries match your filter</p>
     )
   } else {
     return(
@@ -66,10 +73,15 @@ const App = () =>  {
     setCountriesToShow(countriesFiltered)
   }
 
+  const changeFilterTo = (name) => {
+    const event = { 'target': {'value': name}}
+    handleCountryChange(event)
+  }
+
   return (
     <>
       <Filter value={countryFilter} onChange={handleCountryChange} />
-      <ShowCountries countriesToShow={countriesToShow}/>
+      <ShowCountries countriesToShow={countriesToShow} onClickAction={changeFilterTo}/>
     </>
   );
 }
