@@ -46,8 +46,7 @@ describe('POST /blogs/api', () => {
 			title: 'Canonical string reduction',
 			author: 'Edsger W. Dijkstra',
 			url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
-			likes: 12,
-			__v: 0
+			likes: 12
 		}
 
 		await api
@@ -63,6 +62,22 @@ describe('POST /blogs/api', () => {
 		expect(titles).toContain(
 			'Canonical string reduction'
 		)
+	})
+
+	test('succeeds when likes is undefined', async() => {
+		const newBlog = {
+			title: 'Canonical string reduction',
+			author: 'Edsger W. Dijkstra',
+			url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html'
+		}
+
+		await api
+			.post('/api/blogs')
+			.send(newBlog)
+
+		const blogsAtEnd = await helper.blogsInDb()
+		const likes = blogsAtEnd.map(n => n.likes)
+		expect(likes[likes.length - 1]).toBe(0)
 	})
 })
 
