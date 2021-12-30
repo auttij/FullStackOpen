@@ -107,6 +107,26 @@ describe('POST /blogs/api', () => {
 	})
 })
 
+
+describe('DELETE /blogs/api/:id', () => {
+	test('succeeds with valid id', async() => {
+		await api
+			.delete('/api/blogs/5a422a851b54a676234d17f7')
+			.expect(204)
+
+
+		const blogsAtEnd = await helper.blogsInDb()
+		expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+	})
+
+	test('fails with invalid id', async() => {
+		await api
+			.delete('/api/blogs/incorrect_id')
+			.expect(404)
+	})
+
+})
+
 afterAll(() => {
 	mongoose.connection.close()
 })
