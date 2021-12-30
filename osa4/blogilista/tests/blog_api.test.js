@@ -1,33 +1,19 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
-const Note = require('../models/blog')
 
-const initialBlogs = [
-	{
-		_id: '5a422a851b54a676234d17f7',
-		title: 'React patterns',
-		author: 'Michael Chan',
-		url: 'https://reactpatterns.com/',
-		likes: 7,
-		__v: 0
-	},
-	{
-		_id: '5a422aa71b54a676234d17f8',
-		title: 'Go To Statement Considered Harmful',
-		author: 'Edsger W. Dijkstra',
-		url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-		likes: 5,
-		__v: 0
-	}
-]
+const Blog = require('../models/blog')
+
 beforeEach(async () => {
-	await Note.deleteMany({})
-	let noteObject = new Note(initialBlogs[0])
-	await noteObject.save()
-	noteObject = new Note(initialBlogs[1])
-	await noteObject.save()
+	await Blog.deleteMany({})
+
+	let blogObject = new Blog(helper.initialBlogs[0])
+	await blogObject.save()
+
+	blogObject = new Blog(helper.initialBlogs[1])
+	await blogObject.save()
 })
 
 test('blogs are returned as json', async () => {
@@ -37,13 +23,13 @@ test('blogs are returned as json', async () => {
 		.expect('Content-Type', /application\/json/)
 })
 
-test('there are two blogs', async () => {
+test('all blogs are returned', async () => {
 	const response = await api.get('/api/blogs')
 
-	expect(response.body).toHaveLength(initialBlogs.length)
+	expect(response.body).toHaveLength(helper.initialBlogs.length)
 })
 
-test('the first blog is about React patterns', async () => {
+test('a specific blog is within the returned notes', async () => {
 	const response = await api.get('/api/blogs')
 
 	const title = response.body.map(r => r.title)
