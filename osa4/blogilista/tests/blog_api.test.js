@@ -19,19 +19,23 @@ test('blogs are returned as json', async () => {
 })
 
 test('all blogs are returned', async () => {
-	const response = await api.get('/api/blogs')
-
-	expect(response.body).toHaveLength(helper.initialBlogs.length)
+	const blogsAtStart = await helper.blogsInDb()
+	expect(blogsAtStart).toHaveLength(helper.initialBlogs.length)
 })
 
 test('a specific blog is within the returned notes', async () => {
-	const response = await api.get('/api/blogs')
-
-	const title = response.body.map(r => r.title)
+	const blogsAtStart = await helper.blogsInDb()
+	const title = blogsAtStart.map(r => r.title)
 
 	expect(title).toContain(
 		'React patterns'
 	)
+})
+
+test('blog identifier field should be id', async() => {
+	const blogsAtStart = await helper.blogsInDb()
+	const id = blogsAtStart.map(r => r.id)
+	expect(id).toBeDefined()
 })
 
 afterAll(() => {
