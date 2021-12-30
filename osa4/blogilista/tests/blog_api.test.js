@@ -11,7 +11,7 @@ beforeEach(async () => {
 	await Blog.insertMany(helper.initialBlogs)
 })
 
-describe('GET /blogs/api/', () => {
+describe('GET /api/blogs', () => {
 	test('blogs are returned as json', async () => {
 		await api
 			.get('/api/blogs')
@@ -40,7 +40,7 @@ describe('GET /blogs/api/', () => {
 	})
 })
 
-describe('POST /blogs/api', () => {
+describe('POST /api/blogs', () => {
 	test('succeeds with valid data', async() => {
 		const newBlog = {
 			title: 'Canonical string reduction',
@@ -107,8 +107,7 @@ describe('POST /blogs/api', () => {
 	})
 })
 
-
-describe('DELETE /blogs/api/:id', () => {
+describe('DELETE /api/blogs/:id', () => {
 	test('succeeds with valid id', async() => {
 		const blogsAtStart = await helper.blogsInDb()
 		const blogToDelete = blogsAtStart[0]
@@ -134,7 +133,35 @@ describe('DELETE /blogs/api/:id', () => {
 			helper.initialBlogs.length
 		)
 	})
+})
 
+describe('PUT /api/blogs/:id', () => {
+	test('succeeds with valid id', async() => {
+		const blogsAtStart = await helper.blogsInDb()
+		const blogToUpdate = blogsAtStart[0]
+
+		const newBlog = {
+			title: blogToUpdate.title,
+			author: blogToUpdate.author,
+			url: blogToUpdate.url,
+			likes: blogToUpdate.likes + 100
+		}
+
+		await api
+			.put(`/api/blogs/${blogToUpdate.id}`)
+			.send(newBlog)
+			.expect(200)
+
+		const blogsAtEnd = await helper.blogsInDb()
+		expect(blogsAtEnd).toHaveLength(
+			helper.initialBlogs.length
+		)
+
+		const likes = blogsAtEnd.map(n => n.likes)
+		expect(likes).toContain(
+			blogToUpdate.likes + 100
+		)
+	})
 })
 
 afterAll(() => {
