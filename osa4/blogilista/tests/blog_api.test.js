@@ -6,12 +6,12 @@ const api = supertest(app)
 
 const Blog = require('../models/blog')
 
-describe('GET /blogs/api/', () => {
-	beforeEach(async () => {
-		await Blog.deleteMany({})
-		await Blog.insertMany(helper.initialBlogs)
-	})
+beforeEach(async () => {
+	await Blog.deleteMany({})
+	await Blog.insertMany(helper.initialBlogs)
+})
 
+describe('GET /blogs/api/', () => {
 	test('blogs are returned as json', async () => {
 		await api
 			.get('/api/blogs')
@@ -110,19 +110,29 @@ describe('POST /blogs/api', () => {
 
 describe('DELETE /blogs/api/:id', () => {
 	test('succeeds with valid id', async() => {
+		const blogsAtStart = await helper.blogsInDb()
+		const blogToDelete = blogsAtStart[0]
+
 		await api
-			.delete('/api/blogs/5a422a851b54a676234d17f7')
+			.delete(`/api/blogs/${blogToDelete.id}`)
 			.expect(204)
 
 
 		const blogsAtEnd = await helper.blogsInDb()
-		expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+		expect(blogsAtEnd).toHaveLength(
+			helper.initialBlogs.length - 1
+		)
 	})
 
 	test('fails with invalid id', async() => {
 		await api
 			.delete('/api/blogs/incorrect_id')
-			.expect(404)
+			.expect(204)
+
+		const blogsAtEnd = await helper.blogsInDb()
+		expect(blogsAtEnd).toHaveLength(
+			helper.initialBlogs.length
+		)
 	})
 
 })
