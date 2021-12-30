@@ -79,6 +79,32 @@ describe('POST /blogs/api', () => {
 		const likes = blogsAtEnd.map(n => n.likes)
 		expect(likes[likes.length - 1]).toBe(0)
 	})
+
+	test('fails when title is empty', async() => {
+		const newBlog = {
+			author: 'Edsger W. Dijkstra',
+			url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+			likes: 1
+		}
+
+		await api
+			.post('/api/blogs')
+			.send(newBlog)
+			.expect(400)
+	})
+
+	test('fails when url is empty', async() => {
+		const newBlog = {
+			title: 'Canonical string reduction',
+			author: 'Edsger W. Dijkstra',
+			likes: 1
+		}
+
+		await api
+			.post('/api/blogs')
+			.send(newBlog)
+			.expect(400)
+	})
 })
 
 afterAll(() => {
