@@ -86,4 +86,16 @@ describe('<Blog />', () => {
 			'Juhana Autti'
 		)
 	})
+
+	test('blog update function gets fired each time', () => {
+		const button = component.getByText('view')
+		fireEvent.click(button)
+
+		const likeButton = component.container.querySelector('.likeButton')
+
+		fireEvent.click(likeButton)
+		fireEvent.click(likeButton)
+
+		expect(updateBlog.mock.calls).toHaveLength(2)
+	})
 })
