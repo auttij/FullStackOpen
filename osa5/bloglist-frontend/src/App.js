@@ -72,6 +72,25 @@ const App = () => {
       })
   }
 
+  const deleteBlog = (blogId) => {
+    blogService
+      .remove(blogId)
+      .then(response => {
+        const newBlogs = blogs.filter(blog => blog.id !== blogId)
+        setBlogs(newBlogs)
+        setSuccessMessage(`Blog successfully removed`)
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
+      })
+      .catch((error) => {
+        setErrorMessage(`error: ${error.message}`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -116,7 +135,7 @@ const App = () => {
             />
           </Togglable>
           <h2>blogs</h2>
-          <BlogList blogs={blogs} updateBlog={updateBlog} />
+          <BlogList blogs={blogs} updateBlog={updateBlog} deleteBlog={deleteBlog} user={user} />
         </>
       }
     </div>

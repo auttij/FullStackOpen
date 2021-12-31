@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
-const Blog = ({blog, updateBlog}) => {
+const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
   const [visible, setVisible] = useState(false)
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
+
+  const addedByUser = user.username === blog.user.username
+  const visibleWhenAddedByUser = { display: addedByUser ? '' : 'none'}
 
   const toggleVisibility = () => {
     setVisible(!visible)
@@ -31,6 +34,13 @@ const Blog = ({blog, updateBlog}) => {
     )
   }
 
+  const removeBlog = (event) => {
+    const confirm = window.confirm(`Remove blog ${blog.title}`)
+    if (confirm) {
+      deleteBlog(blog.id)
+    }
+  }
+
   return(
     <div style={blogStyle}>
       <div style={hideWhenVisible}>
@@ -42,12 +52,13 @@ const Blog = ({blog, updateBlog}) => {
         <p>{blog.url}</p>
         <p>likes {blog.likes} <button onClick={addLike}>like</button></p>
         <p>{blog.user.name}</p>
+        <button onClick={removeBlog} style={visibleWhenAddedByUser}>remove</button>
       </div>
     </div>
   )
 }
 
-const BlogList = ({blogs, updateBlog}) => {
+const BlogList = ({blogs, updateBlog, deleteBlog, user}) => {
   const blogsSorted = blogs.sort(function (a, b) {
     return b.likes - a.likes
   })
@@ -55,7 +66,12 @@ const BlogList = ({blogs, updateBlog}) => {
   return(
     <>
       {blogsSorted.map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+        <Blog 
+          key={blog.id}
+          blog={blog}
+          updateBlog={updateBlog}
+          deleteBlog={deleteBlog}
+          user={user} />
       )}
     </>
   )
