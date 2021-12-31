@@ -1,37 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import BlogList from './components/Blog'
+import Togglable from './components/Togglable.js'
+import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
-
-const LoginForm = ({onSubmit, username, onUsernameChange, password, onPasswordChange}) => {
-  return (
-    <>
-      <h2>Login</h2>
-      <form onSubmit={onSubmit}>
-        <div>
-          username
-            <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={onUsernameChange}
-          />
-        </div>
-        <div>
-          password
-            <input
-            type="password"
-            value={password}
-            name="Password"
-            onChange={onPasswordChange}
-          />
-        </div>
-        <button type="submit">login</button>
-      </form>
-    </>
-  )
-}
 
 const LogoutButton = ({onClick}) => (
   <button onClick={onClick}>logout</button>
@@ -41,21 +15,6 @@ const UserInfo = ({user, logoutAction}) => (
   <p>{user.name} logged in <LogoutButton onClick={logoutAction}/></p>
 )
 
-const FormField = ({text, value, onChange}) => (
-  <div>{text} <input value={value} onChange={onChange}/></div>
-)
-
-const BlogForm = ({onSubmit, title, author, url, titleChange, authorChange, urlChange}) => {
-  return (
-    <form onSubmit={onSubmit}>
-      <FormField text={'title'} value={title} onChange={titleChange}/>
-      <FormField text={'author'} value={author} onChange={authorChange}/>
-      <FormField text={'url'} value={url} onChange={urlChange}/>
-      <button type="submit">create</button>
-    </form>
-  )
-}
-
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
@@ -64,9 +23,7 @@ const App = () => {
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
 
-  const [title, setTitle] = useState('') 
-  const [author, setAuthor] = useState('') 
-  const [url, setUrl] = useState('') 
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -84,25 +41,21 @@ const App = () => {
     }
   }, [])
 
-  const addBlog = (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: title,
-      author: author,
-      url: url
-    }
-
+  const addBlog = (blogObject) => {
+    blogFormRef.current.toggleVisibility()
     blogService
       .create(blogObject)
         .then(returnedBlog => {
           setBlogs(blogs.concat(returnedBlog))
-          setTitle('')
-          setAuthor('')
-          setUrl('')
-
           setSuccessMessage(`a new blog ${blogObject.title} by ${blogObject.author} added`)
           setTimeout(() => {
             setSuccessMessage(null)
+          }, 5000)
+        })
+        .catch((error) => {
+          setErrorMessage(`error: ${error.message}`)
+          setTimeout(() => {
+            setErrorMessage(null)
           }, 5000)
         })
   }
@@ -145,13 +98,11 @@ const App = () => {
           <h2>Blog app</h2>
           <UserInfo user={user} logoutAction={() => loginService.logout()}/>
           <h2>create new</h2>
-          <BlogForm 
-            onSubmit={(event) => addBlog(event)}
-            title={title} author={author} url={url} 
-            titleChange={({ target }) => setTitle(target.value)} 
-            authorChange={({ target }) => setAuthor(target.value)} 
-            urlChange={({ target }) => setUrl(target.value)} 
-          />
+          <Togglable buttonLabel='create new blog' ref={blogFormRef}>
+            <BlogForm 
+              createBlog={addBlog}
+            />
+          </Togglable>
           <h2>blogs</h2>
           <BlogList blogs={blogs} />
         </>
