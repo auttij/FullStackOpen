@@ -31,9 +31,9 @@ const LoginForm = (props) => {
 }
 
 LoginForm.propTypes = {
-	handleSubmit: PropTypes.func.isRequired,
-	handleUsernameChange: PropTypes.func.isRequired,
-	handlePasswordChange: PropTypes.func.isRequired,
+	onSubmit: PropTypes.func.isRequired,
+	onUsernameChange: PropTypes.func.isRequired,
+	onPasswordChange: PropTypes.func.isRequired,
 	username: PropTypes.string.isRequired,
 	password: PropTypes.string.isRequired
 }
