@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+
 const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
 	const [visible, setVisible] = useState(false)
 
@@ -43,11 +44,11 @@ const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
 
 	return(
 		<div style={blogStyle}>
-			<div style={hideWhenVisible}>
+			<div style={hideWhenVisible} className="hiddenBlog">
 				{blog.title} {blog.author}
 				<button onClick={toggleVisibility}>view</button>
 			</div>
-			<div style={showWhenVisible}>
+			<div style={showWhenVisible} className="visibleBlog">
 				<p>{blog.title} <button onClick={toggleVisibility}>hide</button></p>
 				<p>{blog.url}</p>
 				<p>likes {blog.likes} <button onClick={addLike}>like</button></p>
@@ -58,23 +59,4 @@ const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
 	)
 }
 
-const BlogList = ({ blogs, updateBlog, deleteBlog, user }) => {
-	const blogsSorted = blogs.sort(function (a, b) {
-		return b.likes - a.likes
-	})
-
-	return(
-		<>
-			{blogsSorted.map(blog =>
-				<Blog
-					key={blog.id}
-					blog={blog}
-					updateBlog={updateBlog}
-					deleteBlog={deleteBlog}
-					user={user} />
-			)}
-		</>
-	)
-}
-
-export default BlogList
+export default Blog

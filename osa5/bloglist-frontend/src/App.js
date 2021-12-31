@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import BlogList from './components/Blog'
+import BlogList from './components/BlogList'
 import Togglable from './components/Togglable.js'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
