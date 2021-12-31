@@ -99,6 +99,11 @@ const App = () => {
           setTitle('')
           setAuthor('')
           setUrl('')
+
+          setSuccessMessage(`a new blog ${blogObject.title} by ${blogObject.author} added`)
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 5000)
         })
   }
 
