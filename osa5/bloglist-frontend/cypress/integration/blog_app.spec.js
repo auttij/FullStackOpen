@@ -55,15 +55,10 @@ describe('Blog app', function() {
 
 	describe('When logged in', function() {
 		beforeEach(function() {
-			cy.get('#username')
-				.type('auttij')
-			cy.get('#password')
-				.type('salainen')
-			cy.get('#login-button')
-				.click()
+			cy.login({ username: 'auttij', password: 'salainen' })
 		})
 
-		it.only('A blog can be created', function() {
+		it('A blog can be created', function() {
 			cy.contains('create new blog')
 				.click()
 			cy.get('form')
@@ -85,6 +80,38 @@ describe('Blog app', function() {
 			cy.get('.blog')
 				.should('contain', 'Dependency Management With Python Poetry')
 				.should('contain', 'Philipp Acsany')
+		})
+
+		describe('When blog created', function() {
+			beforeEach(function() {
+				cy.createBlog({
+					title: 'Dependency Management With Python Poetry',
+					author: 'Philipp Acsany',
+					url: 'https://realpython.com/dependency-management-python-poetry/'
+				})
+				cy.createBlog({
+					title: 'Python Zip Imports: Distribute Modules and Packages Quickly',
+					author: 'Leodanis Pozo Ramos',
+					url: 'https://realpython.com/python-zip-import/'
+				})
+				cy.createBlog({
+					title: 'Java vs Python: Basic Python for Java Developers',
+					author: 'Jan-Hein Bührman',
+					url: 'https://realpython.com/java-vs-python/'
+				})
+			})
+
+			it.only('can be liked', function() {
+				cy.get('.blog')
+					.contains('Python Zip Imports: Distribute Modules and Packages Quickly')
+					.find('button:visible')
+					.click()
+				cy.get('.likeButton:visible')
+					.click()
+
+				cy.get('.blog')
+					.contains('likes 1')
+			})
 		})
 	})
 })
