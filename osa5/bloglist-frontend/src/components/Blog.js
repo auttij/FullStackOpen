@@ -48,9 +48,13 @@ const Blog = ({blog, updateBlog}) => {
 }
 
 const BlogList = ({blogs, updateBlog}) => {
+  const blogsSorted = blogs.sort(function (a, b) {
+    return b.likes - a.likes
+  })
+
   return(
     <>
-      {blogs.map(blog =>
+      {blogsSorted.map(blog =>
         <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
       )}
     </>
