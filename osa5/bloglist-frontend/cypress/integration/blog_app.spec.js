@@ -101,7 +101,7 @@ describe('Blog app', function() {
 				})
 			})
 
-			it.only('can be liked', function() {
+			it('can be liked', function() {
 				cy.get('.blog')
 					.contains('Python Zip Imports: Distribute Modules and Packages Quickly')
 					.find('button:visible')
@@ -110,7 +110,28 @@ describe('Blog app', function() {
 					.click()
 
 				cy.get('.blog')
-					.contains('likes 1')
+					.should('contain', 'likes 1')
+			})
+
+			it.only('can be deleted by the creator', function() {
+				cy.get('.blog')
+					.contains('Python Zip Imports: Distribute Modules and Packages Quickly')
+					.find('button:visible')
+					.click()
+
+				cy.get('.removeButton:visible')
+					.click()
+
+				cy.get('.notification')
+					.should('contain', 'Blog successfully removed')
+				cy.get('.notification')
+					.should('have.css', 'color', 'rgb(0, 128, 0)')
+				cy.get('.notification')
+					.should('have.css', 'border-style', 'solid')
+
+				cy.get('.blog')
+					.contains('Python Zip Imports: Distribute Modules and Packages Quickly')
+					.should('not.exist')
 			})
 		})
 	})
