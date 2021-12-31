@@ -1,9 +1,5 @@
 import React, { useState } from 'react'
 
-const FormField = ({ text, value, onChange }) => (
-	<div>{text} <input value={value} onChange={onChange}/></div>
-)
-
 const BlogForm = ({ createBlog }) => {
 	const [title, setTitle] = useState('')
 	const [author, setAuthor] = useState('')
@@ -37,9 +33,9 @@ const BlogForm = ({ createBlog }) => {
 
 	return (
 		<form onSubmit={addBlog}>
-			<FormField text={'title'} value={title} onChange={ handleTitleChange }/>
-			<FormField text={'author'} value={author} onChange={ handleAuthorChange }/>
-			<FormField text={'url'} value={url} onChange={ handleUrlChange }/>
+			<div>title <input id='title' value={title} onChange={ handleTitleChange }/></div>
+			<div>author <input id='author' value={author} onChange={ handleAuthorChange }/></div>
+			<div>url <input id='url' value={url} onChange={ handleUrlChange }/></div>
 			<button type="submit">create</button>
 		</form>
 	)
