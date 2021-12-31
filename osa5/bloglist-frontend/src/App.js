@@ -60,6 +60,18 @@ const App = () => {
         })
   }
 
+  const updateBlog = (blogId, blogObject) => {
+    const blogIdx = blogs.findIndex(blog => blog.id === blogId)
+    blogService
+      .update(blogId, blogObject)
+      .then(returnedBlog => {
+        let newBlogs = [...blogs]
+        let newBlog = {...blogs[blogIdx], likes: returnedBlog.likes }
+        newBlogs[blogIdx] = newBlog
+        setBlogs(newBlogs)
+      })
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -104,7 +116,7 @@ const App = () => {
             />
           </Togglable>
           <h2>blogs</h2>
-          <BlogList blogs={blogs} />
+          <BlogList blogs={blogs} updateBlog={updateBlog} />
         </>
       }
     </div>

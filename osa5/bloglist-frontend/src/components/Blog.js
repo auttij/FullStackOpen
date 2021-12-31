@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-const Blog = ({blog}) => {
+const Blog = ({blog, updateBlog}) => {
   const [visible, setVisible] = useState(false)
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
@@ -17,6 +17,20 @@ const Blog = ({blog}) => {
     marginBottom: 5
   }
 
+  const addLike = (event) => {
+    event.preventDefault()
+    updateBlog(
+      blog.id,
+      {
+        user: blog.user,
+        title: blog.title,
+        author: blog.author,
+        url: blog.url,
+        likes: blog.likes + 1
+      }
+    )
+  }
+
   return(
     <div style={blogStyle}>
       <div style={hideWhenVisible}>
@@ -26,18 +40,18 @@ const Blog = ({blog}) => {
       <div style={showWhenVisible}>
         <p>{blog.title} <button onClick={toggleVisibility}>hide</button></p>
         <p>{blog.url}</p>
-        <p>likes {blog.likes} <button>like</button></p>
+        <p>likes {blog.likes} <button onClick={addLike}>like</button></p>
         <p>{blog.user.name}</p>
       </div>
     </div>
   )
 }
 
-const BlogList = ({blogs}) => {
+const BlogList = ({blogs, updateBlog}) => {
   return(
     <>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
       )}
     </>
   )
