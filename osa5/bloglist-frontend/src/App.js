@@ -41,13 +41,18 @@ const UserInfo = ({user, logoutAction}) => (
   <p>{user.name} logged in <LogoutButton onClick={logoutAction}/></p>
 )
 
-const Main = ({blogs, user, logoutAction}) => {
+const FormField = ({text, value, onChange}) => (
+  <div>{text} <input value={value} onChange={onChange}/></div>
+)
+
+const BlogForm = ({onSubmit, title, author, url, titleChange, authorChange, urlChange}) => {
   return (
-    <>
-      <h2>blogs</h2>
-      <UserInfo user={user} logoutAction={logoutAction}/>
-      <BlogList blogs={blogs} />
-    </>
+    <form onSubmit={onSubmit}>
+      <FormField text={'title'} value={title} onChange={titleChange}/>
+      <FormField text={'author'} value={author} onChange={authorChange}/>
+      <FormField text={'url'} value={url} onChange={urlChange}/>
+      <button type="submit">create</button>
+    </form>
   )
 }
 
@@ -58,6 +63,10 @@ const App = () => {
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
+
+  const [title, setTitle] = useState('') 
+  const [author, setAuthor] = useState('') 
+  const [url, setUrl] = useState('') 
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -75,6 +84,24 @@ const App = () => {
     }
   }, [])
 
+  const addBlog = (event) => {
+    event.preventDefault()
+    const blogObject = {
+      title: title,
+      author: author,
+      url: url
+    }
+
+    blogService
+      .create(blogObject)
+        .then(returnedBlog => {
+          setBlogs(blogs.concat(returnedBlog))
+          setTitle('')
+          setAuthor('')
+          setUrl('')
+        })
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -87,6 +114,7 @@ const App = () => {
         'loggedBlogappUser', JSON.stringify(user)
       ) 
 
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -108,7 +136,20 @@ const App = () => {
           password={password} 
           onUsernameChange={({ target }) => setUsername(target.value)} 
           onPasswordChange={({ target }) => setPassword(target.value)} /> :
-        <Main blogs={blogs} user={user} logoutAction={() => loginService.logout()} />
+        <>
+          <h2>Blog app</h2>
+          <UserInfo user={user} logoutAction={() => loginService.logout()}/>
+          <h2>create new</h2>
+          <BlogForm 
+            onSubmit={(event) => addBlog(event)}
+            title={title} author={author} url={url} 
+            titleChange={({ target }) => setTitle(target.value)} 
+            authorChange={({ target }) => setAuthor(target.value)} 
+            urlChange={({ target }) => setUrl(target.value)} 
+          />
+          <h2>blogs</h2>
+          <BlogList blogs={blogs} />
+        </>
       }
     </div>
   )
