@@ -59,4 +59,31 @@ describe('<Blog />', () => {
 			'Juhana Autti'
 		)
 	})
+
+	test('Full blog is rendered after show-button clicked', () => {
+		const button = component.getByText('view')
+		fireEvent.click(button)
+
+		const hiddenBlogDiv = component.container.querySelector('.hiddenBlog')
+		const visibleBlogDiv = component.container.querySelector('.visibleBlog')
+
+		expect(hiddenBlogDiv).toHaveStyle('display: none')
+		expect(visibleBlogDiv).not.toHaveStyle('display: none')
+
+		expect(visibleBlogDiv).toHaveTextContent(
+			'Dependency Management With Python Poetry'
+		)
+		expect(visibleBlogDiv).toHaveTextContent(
+			'Philipp Acsany'
+		)
+		expect(visibleBlogDiv).toHaveTextContent(
+			'https://realpython.com/dependency-management-python-poetry/'
+		)
+		expect(visibleBlogDiv).toHaveTextContent(
+			'likes'
+		)
+		expect(visibleBlogDiv).toHaveTextContent(
+			'Juhana Autti'
+		)
+	})
 })
