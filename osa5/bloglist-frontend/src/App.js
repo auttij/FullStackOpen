@@ -1,37 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import Blog from './components/Blog'
+import BlogList from './components/Blog'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
-
-const Notification = ({ successMessage, errorMessage }) => {
-  if (successMessage === null && errorMessage === null) {
-    return null
-  }
-  else if (errorMessage === null) {
-    return (
-      <div className="notification">
-        {successMessage}
-      </div>
-    )
-  } else if (successMessage === null) {
-    return (
-      <div className="error">
-        {errorMessage}
-      </div>
-    )
-  }
-
-  return (
-    <>
-      <div className="notification">
-        {successMessage}
-      </div>
-      <div className="error">
-        {errorMessage}
-      </div>
-    </>
-  )
-}
 
 const LoginForm = ({onSubmit, username, onUsernameChange, password, onPasswordChange}) => {
   return (
@@ -62,13 +33,20 @@ const LoginForm = ({onSubmit, username, onUsernameChange, password, onPasswordCh
   )
 }
 
-const BlogForm = ({blogs}) => {
-  return(
+const LogoutButton = ({onClick}) => (
+  <button onClick={onClick}>logout</button>
+) 
+
+const UserInfo = ({user, logoutAction}) => (
+  <p>{user.name} logged in <LogoutButton onClick={logoutAction}/></p>
+)
+
+const Main = ({blogs, user, logoutAction}) => {
+  return (
     <>
       <h2>blogs</h2>
-          {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
-          )}
+      <UserInfo user={user} logoutAction={logoutAction}/>
+      <BlogList blogs={blogs} />
     </>
   )
 }
@@ -87,6 +65,16 @@ const App = () => {
     )  
   }, [])
 
+  
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
+  }, [])
+
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -94,6 +82,11 @@ const App = () => {
       const user = await loginService.login({
         username, password,
       })
+
+      window.localStorage.setItem(
+        'loggedBlogappUser', JSON.stringify(user)
+      ) 
+
       setUser(user)
       setUsername('')
       setPassword('')
@@ -115,7 +108,7 @@ const App = () => {
           password={password} 
           onUsernameChange={({ target }) => setUsername(target.value)} 
           onPasswordChange={({ target }) => setPassword(target.value)} /> :
-        <BlogForm blogs={blogs} />
+        <Main blogs={blogs} user={user} logoutAction={() => loginService.logout()} />
       }
     </div>
   )
