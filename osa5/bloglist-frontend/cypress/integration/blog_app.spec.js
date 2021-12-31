@@ -82,7 +82,7 @@ describe('Blog app', function() {
 				.should('contain', 'Philipp Acsany')
 		})
 
-		describe('When blog created', function() {
+		describe('When blogs created', function() {
 			beforeEach(function() {
 				cy.createBlog({
 					title: 'Dependency Management With Python Poetry',
@@ -113,7 +113,7 @@ describe('Blog app', function() {
 					.should('contain', 'likes 1')
 			})
 
-			it.only('can be deleted by the creator', function() {
+			it('can be deleted by the creator', function() {
 				cy.get('.blog')
 					.contains('Python Zip Imports: Distribute Modules and Packages Quickly')
 					.find('button:visible')
@@ -132,6 +132,50 @@ describe('Blog app', function() {
 				cy.get('.blog')
 					.contains('Python Zip Imports: Distribute Modules and Packages Quickly')
 					.should('not.exist')
+			})
+
+			it('should sort by likes', function() {
+				cy.get('.blog').contains('Dependency Management With Python Poetry').find('button').click()
+				cy.get('.blog').contains('Python Zip Imports: Distribute Modules and Packages Quickly').find('button').click()
+				cy.get('.blog').contains('Java vs Python: Basic Python for Java Developers').find('button').click()
+
+				cy.get('.visibleBlog')
+					.contains('Dependency Management With Python Poetry')
+					.parent()
+					.as('blog1')
+				cy.get('.visibleBlog')
+					.contains('Python Zip Imports: Distribute Modules and Packages Quickly')
+					.parent()
+					.as('blog2')
+				cy.get('.visibleBlog')
+					.contains('Java vs Python: Basic Python for Java Developers')
+					.parent()
+					.as('blog3')
+
+				cy.get('@blog2').find('.likeButton').as('blog2_like')
+				cy.get('@blog3').find('.likeButton').as('blog3_like')
+
+				cy.get('@blog3_like')
+					.click()
+				cy.get('.visibleBlog')
+					.first()
+					.should('contain', 'Java vs Python: Basic Python for Java Developers')
+				cy.get('.visibleBlog')
+					.last()
+					.should('contain', 'Python Zip Imports: Distribute Modules and Packages Quickly')
+
+				cy.get('@blog2_like')
+					.click()
+				cy.wait(500)
+				cy.get('@blog2_like')
+					.click()
+
+				cy.get('.visibleBlog')
+					.first()
+					.should('contain', 'Python Zip Imports: Distribute Modules and Packages Quickly')
+				cy.get('.visibleBlog')
+					.last()
+					.should('contain', 'Dependency Management With Python Poetry')
 			})
 		})
 	})
