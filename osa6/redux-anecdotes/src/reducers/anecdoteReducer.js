@@ -8,13 +8,8 @@ const anecdoteReducer = (state = [], action) => {
       return state.concat(action.data)
     case 'VOTE':
       const id = action.data.id
-      const anecdoteToChange = state.find(n => n.id === id)
-      const changedAnecdote = {
-        ...anecdoteToChange,
-        votes: anecdoteToChange.votes + 1
-      }
       return state.map(anecdote =>
-        anecdote.id !== id ? anecdote : changedAnecdote  
+        anecdote.id !== id ? anecdote : action.data.anecdote  
       )
     default:
       return state
@@ -41,10 +36,16 @@ export const createAnecdote = (content) => {
   }
 }
 
-export const vote = (id) => {
-  return { 
-    type: 'VOTE', 
-    data: { id }
+export const vote = (id, anecdote) => {
+  return async dispatch => {
+    const updatedAnecdote = await anecdoteService.update(id, anecdote)
+    dispatch ({ 
+      type: 'VOTE', 
+      data: { 
+        id: id,
+        anecdote: updatedAnecdote
+      }
+    })
   }
 }
 
