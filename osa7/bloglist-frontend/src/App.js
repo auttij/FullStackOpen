@@ -4,8 +4,13 @@ import Togglable from './components/Togglable.js'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
+import Users from './components/Users'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { useResource } from './hooks'
+import {
+	Route, Switch
+} from 'react-router-dom'
 
 const LogoutButton = ({ onClick }) => (
 	<button onClick={onClick}>logout</button>
@@ -22,6 +27,7 @@ const App = () => {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const [user, setUser] = useState(null)
+	const users = useResource('/api/users')
 
 	const blogFormRef = useRef()
 
@@ -128,14 +134,21 @@ const App = () => {
 				<>
 					<h2>Blog app</h2>
 					<UserInfo user={user} logoutAction={() => loginService.logout()}/>
-					<h2>create new</h2>
-					<Togglable buttonLabel='create new blog' ref={blogFormRef}>
-						<BlogForm
-							createBlog={addBlog}
-						/>
-					</Togglable>
-					<h2>blogs</h2>
-					<BlogList blogs={blogs} updateBlog={updateBlog} deleteBlog={deleteBlog} user={user} />
+					<Switch>
+						<Route path='/create'>
+							<h2>create new</h2>
+							<Togglable buttonLabel='create new blog' ref={blogFormRef}>
+								<BlogForm
+									createBlog={addBlog}
+								/>
+							</Togglable>
+							<h2>blogs</h2>
+							<BlogList blogs={blogs} updateBlog={updateBlog} deleteBlog={deleteBlog} user={user} />
+						</Route>
+						<Route path='/users'>
+							<Users users={users} />
+						</Route>
+					</Switch>
 				</>
 			}
 		</div>
