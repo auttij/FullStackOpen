@@ -1,7 +1,7 @@
 import React from 'react'
 import Blog from './Blog'
 
-const BlogList = ({ blogs, updateBlog, deleteBlog, user }) => {
+const BlogList = ({ blogs }) => {
 	const blogsSorted = blogs.sort(function (a, b) {
 		return b.likes - a.likes
 	})
@@ -12,9 +12,7 @@ const BlogList = ({ blogs, updateBlog, deleteBlog, user }) => {
 				<Blog
 					key={blog.id}
 					blog={blog}
-					updateBlog={updateBlog}
-					deleteBlog={deleteBlog}
-					user={user} />
+				/>
 			)}
 		</>
 	)

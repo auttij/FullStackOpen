@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import BlogList from './components/BlogList'
 import Togglable from './components/Togglable.js'
 import BlogForm from './components/BlogForm'
+import BlogView from './components/BlogView'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Users from './components/Users'
@@ -121,9 +122,14 @@ const App = () => {
 		}
 	}
 
-	const match = useRouteMatch('/users/:id')
-	const userId = match
-		? match.params.id
+	const userMatch = useRouteMatch('/users/:id')
+	const userId = userMatch
+		? userMatch.params.id
+		: null
+
+	const blogMatch = useRouteMatch('/blogs/:id')
+	const blogId = blogMatch
+		? blogMatch.params.id
 		: null
 
 	return (
@@ -147,14 +153,25 @@ const App = () => {
 									createBlog={addBlog}
 								/>
 							</Togglable>
-							<h2>blogs</h2>
-							<BlogList blogs={blogs} updateBlog={updateBlog} deleteBlog={deleteBlog} user={user} />
 						</Route>
 						<Route path='/users/:id'>
 							<UsersInfo id={userId}/>
 						</Route>
 						<Route path='/users'>
 							<Users />
+						</Route>
+						<Route path='/blogs/:id'>
+							<BlogView id={blogId}
+								updateBlog={updateBlog}
+								deleteBlog={deleteBlog}
+								user={user}
+							/>
+						</Route>
+						<Route path=''>
+							<h2>blogs</h2>
+							<BlogList
+								blogs={blogs}
+							/>
 						</Route>
 					</Switch>
 				</>

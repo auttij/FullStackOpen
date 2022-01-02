@@ -9,7 +9,7 @@ const UsersInfo = ({ id }) => {
 
 	const user = users[0].find(u => u.id === id)
 	if (!user) {
-		return <p>No user with if {id}</p>
+		return <p>No user with id {id}</p>
 	}
 
 	return (
