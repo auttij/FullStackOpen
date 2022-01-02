@@ -17,9 +17,9 @@ const CreateNew = (props) => {
 	}
 
 	const reset = () => {
-		content.reset()
-		author.reset()
-		info.reset()
+		content.onChange({ 'target': {'value': ''}})
+		author.onChange({ 'target': {'value': ''}})
+		info.onChange({ 'target': {'value': ''}})
 	}
 
 	return (
