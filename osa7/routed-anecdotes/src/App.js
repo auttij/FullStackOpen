@@ -2,9 +2,26 @@ import React, { useState } from 'react'
 import {
   BrowserRouter as Router,
   Switch, Route, Link,
-  useParams
+  useHistory, useParams,
+  useRouteMatch
 } from "react-router-dom"
 
+
+const Notification = ({ notification }) => {
+	const visible = { display: notification === '' ? 'none' : '' }
+
+  const style = {
+    ...visible, 
+    border: 'solid',
+    padding: 10,
+    borderWidth: 1
+  }
+  return (
+    <div style={style} st>
+      {notification}
+    </div>
+  )
+}
 
 const Menu = () => {
   const padding = {
@@ -19,9 +36,7 @@ const Menu = () => {
   )
 }
 
-const Anecdote = ({ anecdotes }) => {
-  const id = useParams().id
-  const anecdote = anecdotes.find(n => n.id == Number(id))
+const Anecdote = ({ anecdote }) => {
   return (
     <div>
       <h2>{anecdote.content} by {anecdote.author}</h2>
@@ -74,7 +89,6 @@ const CreateNew = (props) => {
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
 
-
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
@@ -109,6 +123,7 @@ const CreateNew = (props) => {
 }
 
 const App = () => {
+  const history = useHistory()
   const [anecdotes, setAnecdotes] = useState([
     {
       content: 'If it hurts, do it more often',
@@ -131,6 +146,11 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
     setAnecdotes(anecdotes.concat(anecdote))
+    setNotification(`a new anecdote ${anecdote.content} created!`)
+    setTimeout(() => {
+      setNotification('')
+    }, 10000)
+    history.push('/anecdotes')
   }
 
   const anecdoteById = (id) =>
@@ -146,30 +166,34 @@ const App = () => {
 
     setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
   }
+  
+  const match = useRouteMatch('/anecdotes/:id')
+  const anecdote = match
+    ? anecdotes.find(anecdote => anecdote.id === Number(match.params.id))
+    : null
 
   return (
     <div>
-      <Router>
-        <h1>Software anecdotes</h1>
-        <Menu />
-        <Switch>
-          <Route path="/anecdotes/:id">
-            <Anecdote anecdotes={anecdotes}/>
-          </Route>
-          <Route path="/anecdotes">
-            <AnecdoteList anecdotes={anecdotes} />
-          </Route>
-          <Route path="/about">
-            <About />
-          </Route>
-          <Route path="/create">
-            <CreateNew addNew={addNew} />
-          </Route>
-        </Switch>
-        <Route path="/">
-          <Footer />
+      <h1>Software anecdotes</h1>
+      <Menu />
+      <Notification notification={notification}/>
+      <Switch>
+        <Route path="/anecdotes/:id">
+          <Anecdote anecdote={anecdote}/>
         </Route>
-      </Router>
+        <Route path="/anecdotes">
+          <AnecdoteList anecdotes={anecdotes} />
+        </Route>
+        <Route path="/about">
+          <About />
+        </Route>
+        <Route path="/create">
+          <CreateNew addNew={addNew} />
+        </Route>
+      </Switch>
+      <Route path="/">
+        <Footer />
+      </Route>
     </div>
   )
 }
