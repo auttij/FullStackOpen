@@ -5,11 +5,12 @@ import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Users from './components/Users'
+import UsersInfo from './components/UsersInfo'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import { useResource } from './hooks'
 import {
-	Route, Switch
+	Route, Switch,
+	useRouteMatch
 } from 'react-router-dom'
 
 const LogoutButton = ({ onClick }) => (
@@ -27,7 +28,6 @@ const App = () => {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const [user, setUser] = useState(null)
-	const users = useResource('/api/users')
 
 	const blogFormRef = useRef()
 
@@ -121,6 +121,11 @@ const App = () => {
 		}
 	}
 
+	const match = useRouteMatch('/users/:id')
+	const userId = match
+		? match.params.id
+		: null
+
 	return (
 		<div>
 			<Notification successMessage={successMessage} errorMessage={errorMessage} />
@@ -145,8 +150,11 @@ const App = () => {
 							<h2>blogs</h2>
 							<BlogList blogs={blogs} updateBlog={updateBlog} deleteBlog={deleteBlog} user={user} />
 						</Route>
+						<Route path='/users/:id'>
+							<UsersInfo id={userId}/>
+						</Route>
 						<Route path='/users'>
-							<Users users={users} />
+							<Users />
 						</Route>
 					</Switch>
 				</>

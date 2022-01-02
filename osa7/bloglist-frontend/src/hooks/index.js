@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-/* eslint-disable no-mixed-spaces-and-tabs */
 export const useResource = (baseUrl) => {
 	const [resources, setResources] = useState([])
 
@@ -9,6 +8,11 @@ export const useResource = (baseUrl) => {
 		const request = axios.get(baseUrl)
 		return request.then(response => setResources(response.data))
 	}, [baseUrl])
+
+	const get = (id) => {
+		const request = axios.get(baseUrl, id)
+		return request.then(response => response.data)
+	}
 
 	const create = async (resource) => {
 		const request = axios.post(baseUrl, resource)
@@ -18,6 +22,7 @@ export const useResource = (baseUrl) => {
 	}
 
 	const service = {
+		get,
 		create
 	}
 
