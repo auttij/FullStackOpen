@@ -10,7 +10,7 @@ import UsersInfo from './components/UsersInfo'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import {
-	Route, Switch,
+	Route, Switch, Link,
 	useRouteMatch
 } from 'react-router-dom'
 
@@ -132,6 +132,18 @@ const App = () => {
 		? blogMatch.params.id
 		: null
 
+	const navBarStyle = {
+		background: 'BurlyWood',
+		padding: 'em'
+	}
+
+	const navLinkStyle = {
+		paddingTop: 10,
+		paddingLeft: 2,
+		borderWidth: 1,
+		marginBottom: 5
+	}
+
 	return (
 		<div>
 			<Notification successMessage={successMessage} errorMessage={errorMessage} />
@@ -143,8 +155,12 @@ const App = () => {
 					onUsernameChange={({ target }) => setUsername(target.value)}
 					onPasswordChange={({ target }) => setPassword(target.value)} /> :
 				<>
+					<div style={navBarStyle}>
+						<Link to={'/blogs'} style={navLinkStyle}>blogs</Link>
+						<Link to={'/users'} style={navLinkStyle}>users</Link>
+						<UserInfo user={user} logoutAction={() => loginService.logout()}/>
+					</div>
 					<h2>Blog app</h2>
-					<UserInfo user={user} logoutAction={() => loginService.logout()}/>
 					<Switch>
 						<Route path='/create'>
 							<h2>create new</h2>
@@ -167,7 +183,7 @@ const App = () => {
 								user={user}
 							/>
 						</Route>
-						<Route path=''>
+						<Route path='/blogs'>
 							<h2>blogs</h2>
 							<BlogList
 								blogs={blogs}
