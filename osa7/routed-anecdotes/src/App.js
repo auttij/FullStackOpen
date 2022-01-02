@@ -5,7 +5,6 @@ import {
   useHistory, useParams,
   useRouteMatch
 } from "react-router-dom"
-import { useField } from './hooks'
 import Notification from './modules/Notification'
 import Menu from './modules/Menu'
 import Footer from './modules/Footer'
